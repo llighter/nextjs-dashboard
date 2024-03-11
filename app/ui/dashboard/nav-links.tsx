@@ -20,12 +20,12 @@ const links = [
     href: '/dashboard/invoices',
     icon: DocumentDuplicateIcon,
   },
-  { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
   {
-    name: 'Transactions',
-    href: '/dashboard/transactions',
+    name: 'Invoices2',
+    href: '/dashboard/invoices2',
     icon: DocumentMagnifyingGlassIcon,
   },
+  { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
   {
     name: 'Payments',
     href: '/dashboard/payments',
