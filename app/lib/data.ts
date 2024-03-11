@@ -89,13 +89,13 @@ export async function fetchCardData() {
   }
 }
 
-const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
+  pageSize: number = 10,
 ) {
   noStore();
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  const offset = (currentPage - 1) * pageSize;
 
   try {
     const invoices = await sql<InvoicesTable[]>`
@@ -116,7 +116,7 @@ export async function fetchFilteredInvoices(
         invoices.date::text ILIKE ${`%${query}%`} OR
         invoices.status ILIKE ${`%${query}%`}
       ORDER BY invoices.date DESC
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+      LIMIT ${pageSize} OFFSET ${offset}
     `;
 
     return invoices;
@@ -126,10 +126,11 @@ export async function fetchFilteredInvoices(
   }
 }
 
-export async function fetchInvoicesPages(query: string) {
+export async function fetchInvoicesPages(query: string, pageSize: number = 10) {
   noStore();
   try {
-    const count = await sql`SELECT COUNT(*)
+    // TODO: 단 건 조회 시에도 배열로 받아야 하는지 확인 필요
+    const [count] = await sql`SELECT COUNT(*)
     FROM invoices
     JOIN customers ON invoices.customer_id = customers.id
     WHERE
@@ -140,7 +141,7 @@ export async function fetchInvoicesPages(query: string) {
       invoices.status ILIKE ${`%${query}%`}
   `;
 
-    const totalPages = Math.ceil(Number(count.count) / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(Number(count.count) / pageSize);
     return totalPages;
   } catch (error) {
     console.error('Database Error:', error);
